@@ -81,6 +81,50 @@ class Student:
         else:
             return "Ошибка"
 
+    def __str__(self) -> str:
+        """Returns student's information."""
+        return (f"Имя: {self.name}\n"
+                f"Фамилия: {self.surname}\n"
+                f"Средняя оценка за домашние задания: {avg_grade(self.grades):.2f}\n"
+                f"Курсы в процессе изучения: {', '.join(self.courses_in_progress)}\n"
+                f"Завершенные курсы: {', '.join(self.finished_courses)}")
+
+    def __eq__(self, other) -> bool:
+        """Equal: student1 == student2 (by average rating)"""
+        if not isinstance(other, Student):
+            return NotImplemented
+        return avg_grade(self.grades) == avg_grade(other.grades)
+
+    def __ne__(self, other) -> bool:
+        """Not equal: student1 != student2 (by average rating)"""
+        if not isinstance(other, Student):
+            return NotImplemented
+        return avg_grade(self.grades) != avg_grade(other.grades)
+
+    def __lt__(self, other) -> bool:
+        """Less than: student1 < student2 (by average rating)"""
+        if not isinstance(other, Student):
+            return NotImplemented
+        return avg_grade(self.grades) < avg_grade(other.grades)
+
+    def __le__(self, other) -> bool:
+        """Less than or equal: student1 <= student2 (by average rating)"""
+        if not isinstance(other, Student):
+            return NotImplemented
+        return avg_grade(self.grades) <= avg_grade(other.grades)
+
+    def __gt__(self, other) -> bool:
+        """Greater than: student1 > student2 (by average rating)"""
+        if not isinstance(other, Student):
+            return NotImplemented
+        return avg_grade(self.grades) > avg_grade(other.grades)
+
+    def __ge__(self, other) -> bool:
+        """Greater than or equal: student1 >= student2 (by average rating)"""
+        if not isinstance(other, Student):
+            return NotImplemented
+        return avg_grade(self.grades) >= avg_grade(other.grades)
+
 
 class Mentor:
     """Parent class for all mentors.
@@ -138,6 +182,48 @@ class Lecturer(Mentor):
         super().__init__(name, surname)
         self.grades = {}
 
+    def __str__(self) -> str:
+        """Returns lecturer's information."""
+        return (f"Имя: {self.name}\n"
+                f"Фамилия: {self.surname}\n"
+                f"Средняя оценка за лекции: {avg_grade(self.grades):.2f}")
+
+    def __eq__(self, other) -> bool:
+        """Equal: lecturer1 == lecturer2 (by average rating)"""
+        if not isinstance(other, Lecturer):
+            return NotImplemented
+        return avg_grade(self.grades) == avg_grade(other.grades)
+
+    def __ne__(self, other) -> bool:
+        """Not equal: lecturer1 != lecturer2 (by average rating)"""
+        if not isinstance(other, Lecturer):
+            return NotImplemented
+        return avg_grade(self.grades) != avg_grade(other.grades)
+
+    def __lt__(self, other) -> bool:
+        """Less than: lecturer1 < lecturer2 (by average rating)"""
+        if not isinstance(other, Lecturer):
+            return NotImplemented
+        return avg_grade(self.grades) < avg_grade(other.grades)
+
+    def __le__(self, other) -> bool:
+        """Less than or equal: lecturer1 <= lecturer2 (by average rating)"""
+        if not isinstance(other, Lecturer):
+            return NotImplemented
+        return avg_grade(self.grades) <= avg_grade(other.grades)
+
+    def __gt__(self, other) -> bool:
+        """Greater than: lecturer1 > lecturer2 (by average rating)"""
+        if not isinstance(other, Lecturer):
+            return NotImplemented
+        return avg_grade(self.grades) > avg_grade(other.grades)
+
+    def __ge__(self, other) -> bool:
+        """Greater than or equal: lecturer1 >= lecturer2 (by average rating)"""
+        if not isinstance(other, Lecturer):
+            return NotImplemented
+        return avg_grade(self.grades) >= avg_grade(other.grades)
+
 
 class Reviewer(Mentor):
     """Reviewer class for mentors. Can evaluate the students.
@@ -183,6 +269,11 @@ class Reviewer(Mentor):
         else:
             return 'Ошибка'
 
+    def __str__(self) -> str:
+        """Returns reviewer's information."""
+        return (f"Имя: {self.name}\n"
+                f"Фамилия: {self.surname}")
+
 
 def avg_grade(course_grades: dict) -> float:
     """Calculate average grade for one person courses.
@@ -215,19 +306,79 @@ if __name__ == "__main__":
     # print(isinstance(reviewer, Mentor)) # True
     # print(lecturer.courses_attached)    # []
     # print(reviewer.courses_attached)    # []
+    #
+    # print("Задание № 2. Атрибуты и взаимодействие классов:\n")
+    # lecturer = Lecturer('Иван', 'Иванов')
+    # reviewer = Reviewer('Пётр', 'Петров')
+    # student = Student('Ольга', 'Алёхина', 'Ж')
+    #
+    # student.courses_in_progress += ['Python', 'Java']
+    # lecturer.courses_attached += ['Python', 'C++']
+    # reviewer.courses_attached += ['Python', 'C++']
+    #
+    # print(student.rate_lecture(lecturer, 'Python', 7))   # None
+    # print(student.rate_lecture(lecturer, 'Java', 8))     # Ошибка
+    # print(student.rate_lecture(lecturer, 'С++', 8))      # Ошибка
+    # print(student.rate_lecture(reviewer, 'Python', 6))   # Ошибка
+    #
+    # print(lecturer.grades)  # {'Python': [7]}
 
-    print("Задание № 2. Атрибуты и взаимодействие классов:\n")
-    lecturer = Lecturer('Иван', 'Иванов')
-    reviewer = Reviewer('Пётр', 'Петров')
-    student = Student('Ольга', 'Алёхина', 'Ж')
+    print("Задание № 3. Полиморфизм и магические методы:\n")
+    reviewer1 = Reviewer('Василий', 'Иванов')
+    reviewer1.courses_attached += ['Java', 'Python', 'Git', 'OOP']
+    reviewer2 = Reviewer('Григорий', 'Волков')
+    reviewer2.courses_attached += ['Python', 'Git', 'OOP']
+    lecturer1 = Lecturer('Сергей', 'Петров')
+    lecturer1.courses_attached += ['Python', 'Java', 'OOP']
+    lecturer2 = Lecturer('Вера', 'Васильева')
+    lecturer2.courses_attached += ['Git', 'OOP', 'Python']
+    student1 = Student('Николай', 'Степанов', 'М')
+    student2 = Student('Лидия', 'Зайцева', 'М')
+    student1.finished_courses += ['C++', 'Java']
+    student1.courses_in_progress += ['Python', 'Git', 'OOP']
+    student1.rate_lecture(lecturer1, 'Python', 8)
+    student1.rate_lecture(lecturer2, 'Git', 9)
+    student1.rate_lecture(lecturer2, 'Python', 9)
+    student2.finished_courses += ['Git', 'Java']
+    student2.courses_in_progress += ['Python', 'OOP', 'C++']
+    student2.rate_lecture(lecturer1, 'Python', 9)
+    student2.rate_lecture(lecturer1, 'OOP', 8)
+    student2.rate_lecture(lecturer2, 'Python', 8)
+    reviewer1.rate_hw(student1, 'Python', 8)
+    reviewer1.rate_hw(student1, 'OOP', 7)
+    reviewer1.rate_hw(student2,'Python', 8)
+    reviewer1.rate_hw(student2, 'OOP', 8)
+    reviewer2.rate_hw(student1, 'Python', 9)
+    reviewer2.rate_hw(student1, 'OOP', 7)
+    reviewer2.rate_hw(student2,'Python', 9)
+    reviewer2.rate_hw(student2, 'OOP', 8)
 
-    student.courses_in_progress += ['Python', 'Java']
-    lecturer.courses_attached += ['Python', 'C++']
-    reviewer.courses_attached += ['Python', 'C++']
+    print("Проверяющие:\n")
+    print(reviewer1, "\n")
+    print(reviewer2, "\n")
+    print("\nЛекторы:\n")
+    print(lecturer1, "\n")
+    print(lecturer2, "\n")
+    print("\nСтуденты:\n")
+    print(student1, "\n")
+    print(student2, "\n")
 
-    print(student.rate_lecture(lecturer, 'Python', 7))   # None
-    print(student.rate_lecture(lecturer, 'Java', 8))     # Ошибка
-    print(student.rate_lecture(lecturer, 'С++', 8))      # Ошибка
-    print(student.rate_lecture(reviewer, 'Python', 6))   # Ошибка
-
-    print(lecturer.grades)  # {'Python': [7]}
+    print("\nТестирование операторов сравнения\n")
+    print("Сравнение студентов по средней оценке:")
+    print(f"{student1.name} {student1.surname}, средняя оценка: {avg_grade(student1.grades):.2f}")
+    print(f"{student2.name} {student2.surname}, средняя оценка: {avg_grade(student2.grades):.2f}")
+    print(f"{student1.name} {student1.surname} == {student2.name} {student2.surname}: {student1 == student2}")
+    print(f"{student1.name} {student1.surname} != {student2.name} {student2.surname}: {student1 != student2}")
+    print(f"{student2.name} {student2.surname} < {student2.name} {student2.surname}: {student1 < student2}")
+    print(f"{student1.name} {student1.surname} > {student2.name} {student2.surname}: {student1 > student2}")
+    print(f"{student1.name} {student1.surname} <= {student2.name} {student2.surname}: {student1 <= student2}")
+    print(f"{student1.name} {student1.surname} >= {student2.name} {student2.surname}: {student1 >= student2}")
+    print("\nСравнение лекторов по средней оценке:")
+    print(f"{lecturer1.name} {lecturer1.surname}, средняя оценка: = {avg_grade(lecturer1.grades):.2f}")
+    print(f"{lecturer2.name} {lecturer2.surname}, средняя оценка:  = {avg_grade(lecturer2.grades):.2f}")
+    print(f"{lecturer1.name} {lecturer1.surname} == {lecturer2.name} {lecturer2.surname}: {lecturer1 == lecturer2}")
+    print(f"{lecturer1.name} {lecturer1.surname} != {lecturer2.name} {lecturer2.surname}: {lecturer1 != lecturer2}")
+    print(f"{lecturer1.name} {lecturer1.surname} < {lecturer2.name} {lecturer2.surname}: {lecturer1 < lecturer2}")
+    print(f"{lecturer1.name} {lecturer1.surname} > {lecturer2.name} {lecturer2.surname}: {lecturer1 > lecturer2}")
+    print(f"{lecturer1.name} {lecturer1.surname} <= {lecturer2.name} {lecturer2.surname}: {lecturer1 <= lecturer2}")
+    print(f"{lecturer1.name} {lecturer1.surname} >= {lecturer2.name} {lecturer2.surname}: {lecturer1 >= lecturer2}")
