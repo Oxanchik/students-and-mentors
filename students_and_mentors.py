@@ -297,6 +297,48 @@ def avg_grade(course_grades: dict) -> float:
 
     return sum(target_rating) / len(target_rating)
 
+def avg_students_grade(students_list: list, course_name: str) -> float:
+    """Calculate average grade for a particular course among all students.
+
+    Args:
+        students_list (list): List of students for a partucular course.
+        course_name (str): Course name.
+
+    Returns:
+        float: Average grade for the course across all students or 0.0 if no grades.
+
+    """
+    target_rating = []
+    for student in students_list:
+        if course_name in student.grades:
+            target_rating.extend(student.grades[course_name])
+
+    if not target_rating:
+        return 0.0
+
+    return sum(target_rating) / len(target_rating)
+
+def avg_lecturers_grade(lecturers_list: list, course_name: str) -> float:
+    """Calculate average grade for a particular course among all lecturers.
+
+    Args:
+        lecturers_list (list): List of lecturers for a partucular course.
+        course_name (str): Course name.
+
+    Returns:
+        float: Average grade for the course across all students or 0.0 if no grades.
+
+    """
+    target_rating = []
+    for lecturer in lecturers_list:
+        if course_name in lecturer.grades:
+            target_rating.extend(lecturer.grades[course_name])
+
+    if not target_rating:
+        return 0.0
+
+    return sum(target_rating) / len(target_rating)
+
 # Testing:
 if __name__ == "__main__":
     # print("Задание № 1. Наследование:\n")
@@ -323,7 +365,7 @@ if __name__ == "__main__":
     #
     # print(lecturer.grades)  # {'Python': [7]}
 
-    print("Задание № 3. Полиморфизм и магические методы:\n")
+    print("Задание № 3. Полиморфизм и магические методы и Задание № 4. Полевые испытания:\n")
     reviewer1 = Reviewer('Василий', 'Иванов')
     reviewer1.courses_attached += ['Java', 'Python', 'Git', 'OOP']
     reviewer2 = Reviewer('Григорий', 'Волков')
@@ -382,3 +424,14 @@ if __name__ == "__main__":
     print(f"{lecturer1.name} {lecturer1.surname} > {lecturer2.name} {lecturer2.surname}: {lecturer1 > lecturer2}")
     print(f"{lecturer1.name} {lecturer1.surname} <= {lecturer2.name} {lecturer2.surname}: {lecturer1 <= lecturer2}")
     print(f"{lecturer1.name} {lecturer1.surname} >= {lecturer2.name} {lecturer2.surname}: {lecturer1 >= lecturer2}")
+
+    print("\nСредняя оценка курсов:")
+    course1 = 'OOP'
+    course2 = 'Python'
+    print(f"Средняя оценка за домашние задания у студентов курса {course1}: {avg_students_grade([student1, student2], course1):.2f}")
+    print(f"Средняя оценка за лекции у лекторов курса {course2}: {avg_lecturers_grade([lecturer1, lecturer2], course2):.2f}")
+
+    print("\nСортировка студентов по средней оценке:")
+    students_sorted = sorted([student1, student2], reverse=True)
+    for i, target_student in enumerate(students_sorted, 1):
+        print(f"{i}. {target_student.name} {target_student.surname}: {avg_grade(target_student.grades):.2f}")
