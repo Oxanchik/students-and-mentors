@@ -69,6 +69,7 @@ class Student:
 
         Returns:
             str: 'Ошибка' if the operation is invalid, None on success.
+
         """
         if (isinstance(target_lecturer, Lecturer) and
                 course in self.courses_in_progress and
@@ -341,31 +342,31 @@ def avg_lecturers_grade(lecturers_list: list, course_name: str) -> float:
 
 # Testing:
 if __name__ == "__main__":
-    # print("Задание № 1. Наследование:\n")
-    # lecturer = Lecturer('Иван', 'Иванов')
-    # reviewer = Reviewer('Пётр', 'Петров')
-    # print(isinstance(lecturer, Mentor)) # True
-    # print(isinstance(reviewer, Mentor)) # True
-    # print(lecturer.courses_attached)    # []
-    # print(reviewer.courses_attached)    # []
-    #
-    # print("Задание № 2. Атрибуты и взаимодействие классов:\n")
-    # lecturer = Lecturer('Иван', 'Иванов')
-    # reviewer = Reviewer('Пётр', 'Петров')
-    # student = Student('Ольга', 'Алёхина', 'Ж')
-    #
-    # student.courses_in_progress += ['Python', 'Java']
-    # lecturer.courses_attached += ['Python', 'C++']
-    # reviewer.courses_attached += ['Python', 'C++']
-    #
-    # print(student.rate_lecture(lecturer, 'Python', 7))   # None
-    # print(student.rate_lecture(lecturer, 'Java', 8))     # Ошибка
-    # print(student.rate_lecture(lecturer, 'С++', 8))      # Ошибка
-    # print(student.rate_lecture(reviewer, 'Python', 6))   # Ошибка
-    #
-    # print(lecturer.grades)  # {'Python': [7]}
+    print("Задание № 1. Наследование:\n")
+    lecturer = Lecturer('Иван', 'Иванов')
+    reviewer = Reviewer('Пётр', 'Петров')
+    print(isinstance(lecturer, Mentor)) # True
+    print(isinstance(reviewer, Mentor)) # True
+    print(lecturer.courses_attached)    # []
+    print(reviewer.courses_attached)    # []
 
-    print("Задание № 3. Полиморфизм и магические методы и Задание № 4. Полевые испытания:\n")
+    print("\n\nЗадание № 2. Атрибуты и взаимодействие классов:\n")
+    lecturer = Lecturer('Иван', 'Иванов')
+    reviewer = Reviewer('Пётр', 'Петров')
+    student = Student('Ольга', 'Алёхина', 'Ж')
+
+    student.courses_in_progress += ['Python', 'Java']
+    lecturer.courses_attached += ['Python', 'C++']
+    reviewer.courses_attached += ['Python', 'C++']
+
+    print(student.rate_lecture(lecturer, 'Python', 7))   # None
+    print(student.rate_lecture(lecturer, 'Java', 8))     # Ошибка
+    print(student.rate_lecture(lecturer, 'С++', 8))      # Ошибка
+    print(student.rate_lecture(reviewer, 'Python', 6))   # Ошибка
+
+    print(lecturer.grades)  # {'Python': [7]}
+
+    print("\n\nЗадание № 3. Полиморфизм и магические методы и Задание № 4. Полевые испытания:\n")
     reviewer1 = Reviewer('Василий', 'Иванов')
     reviewer1.courses_attached += ['Java', 'Python', 'Git', 'OOP']
     reviewer2 = Reviewer('Григорий', 'Волков')
@@ -435,3 +436,8 @@ if __name__ == "__main__":
     students_sorted = sorted([student1, student2], reverse=True)
     for i, target_student in enumerate(students_sorted, 1):
         print(f"{i}. {target_student.name} {target_student.surname}: {avg_grade(target_student.grades):.2f}")
+
+    print("\nСортировка лекторов по средней оценке:")
+    lecturers_sorted = sorted([lecturer1, lecturer2, lecturer], reverse=True)
+    for i, target_lecturer in enumerate(lecturers_sorted, 1):
+        print(f"{i}. {target_lecturer.name} {target_lecturer.surname}: {avg_grade(target_lecturer.grades):.2f}")
