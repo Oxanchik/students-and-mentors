@@ -1,4 +1,64 @@
-class Student:
+class ComparableByAvgGradeMixin:
+    """This mixin adds rich comparison methods based on average grade value. 
+    
+    Enables all comparison operators (==, !=, <, <=, >, >=) that use 
+    global function avg_grade(self.grades) for ordering instances of the same class.
+    
+    Does not imply "is-a" relationship. Provides reusable comparison behavior.
+    
+    Host class must provide:
+        grades (dict[str, list[int]]).
+        Access to global function avg_grade(grades: dict) -> float.
+       
+    Example:
+        student1 < student2  # True if avg_grade(student1.grades) < avg_grade(student2.grades)
+
+    Note:
+        Returns NotImplemented if compared with different class instance.
+        Relies on avg_grade returning 0.0 for empty grades dict or empty grade lists.
+    
+    """
+
+    grades: dict[str, list[int]]
+
+    def __eq__(self, other) -> bool:
+        """Equal by average rating"""
+        if not isinstance(other, self.__class__):
+            return NotImplemented
+        return avg_grade(self.grades) == avg_grade(other.grades)
+
+    def __ne__(self, other) -> bool:
+        """Not equal by average rating"""
+        if not isinstance(other, self.__class__):
+            return NotImplemented
+        return avg_grade(self.grades) != avg_grade(other.grades)
+
+    def __lt__(self, other) -> bool:
+        """Less than by average rating"""
+        if not isinstance(other, self.__class__):
+            return NotImplemented
+        return avg_grade(self.grades) < avg_grade(other.grades)
+
+    def __le__(self, other) -> bool:
+        """Less than or equal by average rating"""
+        if not isinstance(other, self.__class__):
+            return NotImplemented
+        return avg_grade(self.grades) <= avg_grade(other.grades)
+
+    def __gt__(self, other) -> bool:
+        """Greater than by average rating"""
+        if not isinstance(other, self.__class__):
+            return NotImplemented
+        return avg_grade(self.grades) > avg_grade(other.grades)
+
+    def __ge__(self, other) -> bool:
+        """Greater than or equal by average rating"""
+        if not isinstance(other, self.__class__):
+            return NotImplemented
+        return avg_grade(self.grades) >= avg_grade(other.grades)
+
+
+class Student(ComparableByAvgGradeMixin):
     """Student class.
     Can receive grades for homework.
     Can evaluate lecturers.
@@ -32,7 +92,7 @@ class Student:
         if not isinstance(surname, str):
             raise TypeError(f"Surname must be str, not {type(surname).__name__}")
         if not isinstance(gender, str):
-            raise TypeError(f"Gender must be str, not{type(gender).__name__}")
+            raise TypeError(f"Gender must be str, not {type(gender).__name__}")
 
         if gender.strip().upper() not in ["М", "Ж"]:
             raise ValueError(f"Gender must be 'М' or 'Ж'")
@@ -65,7 +125,7 @@ class Student:
         Args:
             target_lecturer: Lecturer being rated.
             course: Course name.
-            grade: Grade to assign (0-10).
+            grade: Grade to assign (1-10).
 
         Returns:
             str: 'Ошибка' if the operation is invalid, None on success.
@@ -74,11 +134,12 @@ class Student:
         if (isinstance(target_lecturer, Lecturer) and
                 course in self.courses_in_progress and
                 course in target_lecturer.courses_attached and
-                0 <= grade <= 10):
+                isinstance(grade, int) and 1 <= grade <= 10):
             if course in target_lecturer.grades:
                 target_lecturer.grades[course] += [grade]
             else:
                 target_lecturer.grades[course] = [grade]
+            return None
         else:
             return "Ошибка"
 
@@ -90,43 +151,7 @@ class Student:
                 f"Курсы в процессе изучения: {', '.join(self.courses_in_progress)}\n"
                 f"Завершенные курсы: {', '.join(self.finished_courses)}")
 
-    def __eq__(self, other) -> bool:
-        """Equal: student1 == student2 (by average rating)"""
-        if not isinstance(other, Student):
-            return NotImplemented
-        return avg_grade(self.grades) == avg_grade(other.grades)
-
-    def __ne__(self, other) -> bool:
-        """Not equal: student1 != student2 (by average rating)"""
-        if not isinstance(other, Student):
-            return NotImplemented
-        return avg_grade(self.grades) != avg_grade(other.grades)
-
-    def __lt__(self, other) -> bool:
-        """Less than: student1 < student2 (by average rating)"""
-        if not isinstance(other, Student):
-            return NotImplemented
-        return avg_grade(self.grades) < avg_grade(other.grades)
-
-    def __le__(self, other) -> bool:
-        """Less than or equal: student1 <= student2 (by average rating)"""
-        if not isinstance(other, Student):
-            return NotImplemented
-        return avg_grade(self.grades) <= avg_grade(other.grades)
-
-    def __gt__(self, other) -> bool:
-        """Greater than: student1 > student2 (by average rating)"""
-        if not isinstance(other, Student):
-            return NotImplemented
-        return avg_grade(self.grades) > avg_grade(other.grades)
-
-    def __ge__(self, other) -> bool:
-        """Greater than or equal: student1 >= student2 (by average rating)"""
-        if not isinstance(other, Student):
-            return NotImplemented
-        return avg_grade(self.grades) >= avg_grade(other.grades)
-
-
+    
 class Mentor:
     """Parent class for all mentors.
     Stores basic info about the mentor.
@@ -166,7 +191,7 @@ class Mentor:
         return self._surname
 
 
-class Lecturer(Mentor):
+class Lecturer(Mentor, ComparableByAvgGradeMixin):
     """Lecturer class for mentors. Can give lectures and be evaluated by students.
     Inherited from the parent class Mentor.
 
@@ -189,43 +214,7 @@ class Lecturer(Mentor):
                 f"Фамилия: {self.surname}\n"
                 f"Средняя оценка за лекции: {avg_grade(self.grades):.2f}")
 
-    def __eq__(self, other) -> bool:
-        """Equal: lecturer1 == lecturer2 (by average rating)"""
-        if not isinstance(other, Lecturer):
-            return NotImplemented
-        return avg_grade(self.grades) == avg_grade(other.grades)
-
-    def __ne__(self, other) -> bool:
-        """Not equal: lecturer1 != lecturer2 (by average rating)"""
-        if not isinstance(other, Lecturer):
-            return NotImplemented
-        return avg_grade(self.grades) != avg_grade(other.grades)
-
-    def __lt__(self, other) -> bool:
-        """Less than: lecturer1 < lecturer2 (by average rating)"""
-        if not isinstance(other, Lecturer):
-            return NotImplemented
-        return avg_grade(self.grades) < avg_grade(other.grades)
-
-    def __le__(self, other) -> bool:
-        """Less than or equal: lecturer1 <= lecturer2 (by average rating)"""
-        if not isinstance(other, Lecturer):
-            return NotImplemented
-        return avg_grade(self.grades) <= avg_grade(other.grades)
-
-    def __gt__(self, other) -> bool:
-        """Greater than: lecturer1 > lecturer2 (by average rating)"""
-        if not isinstance(other, Lecturer):
-            return NotImplemented
-        return avg_grade(self.grades) > avg_grade(other.grades)
-
-    def __ge__(self, other) -> bool:
-        """Greater than or equal: lecturer1 >= lecturer2 (by average rating)"""
-        if not isinstance(other, Lecturer):
-            return NotImplemented
-        return avg_grade(self.grades) >= avg_grade(other.grades)
-
-
+    
 class Reviewer(Mentor):
     """Reviewer class for mentors. Can evaluate the students.
     Inherited from the parent class Mentor.
@@ -248,7 +237,7 @@ class Reviewer(Mentor):
         Args:
             target_student (Student): Student being rated.
             course (str): Course name.
-            grade (int): Grade to assign (0-10).
+            grade (int): Grade to assign (1-10).
 
         Returns:
             str: 'Ошибка' if the operation is invalid, None on success.
@@ -262,11 +251,12 @@ class Reviewer(Mentor):
         if (isinstance(target_student, Student) and
                 course in self.courses_attached and
                 course in target_student.courses_in_progress and
-                0 <= grade <= 10):
+                isinstance(grade, int) and 1 <= grade <= 10):
             if course in target_student.grades:
                 target_student.grades[course] += [grade]
             else:
                 target_student.grades[course] = [grade]
+            return None
         else:
             return 'Ошибка'
 
@@ -286,14 +276,14 @@ def avg_grade(course_grades: dict) -> float:
         float: Average grade across all courses or 0.0 if no grades.
 
     """
-    if not course_grades:
+    if not course_grades: # empty grades dict
         return 0.0
 
     target_rating = []
     for grades in course_grades.values():
         target_rating.extend(grades)
 
-    if not target_rating:
+    if not target_rating: # empty grade
         return 0.0
 
     return sum(target_rating) / len(target_rating)
@@ -302,7 +292,7 @@ def avg_students_grade(students_list: list, course_name: str) -> float:
     """Calculate average grade for a particular course among all students.
 
     Args:
-        students_list (list): List of students for a partucular course.
+        students_list (list): List of students for a particular course.
         course_name (str): Course name.
 
     Returns:
@@ -311,7 +301,9 @@ def avg_students_grade(students_list: list, course_name: str) -> float:
     """
     target_rating = []
     for student in students_list:
-        if course_name in student.grades:
+        if (isinstance(student, Student) and 
+            isinstance(student.grades, dict) and 
+            course_name in student.grades):
             target_rating.extend(student.grades[course_name])
 
     if not target_rating:
@@ -323,7 +315,7 @@ def avg_lecturers_grade(lecturers_list: list, course_name: str) -> float:
     """Calculate average grade for a particular course among all lecturers.
 
     Args:
-        lecturers_list (list): List of lecturers for a partucular course.
+        lecturers_list (list): List of lecturers for a particular course.
         course_name (str): Course name.
 
     Returns:
@@ -332,7 +324,9 @@ def avg_lecturers_grade(lecturers_list: list, course_name: str) -> float:
     """
     target_rating = []
     for lecturer in lecturers_list:
-        if course_name in lecturer.grades:
+        if (isinstance(lecturer, Lecturer) and 
+            isinstance(lecturer.grades, dict) and  
+            course_name in lecturer.grades):
             target_rating.extend(lecturer.grades[course_name])
 
     if not target_rating:
@@ -343,28 +337,26 @@ def avg_lecturers_grade(lecturers_list: list, course_name: str) -> float:
 # Testing:
 if __name__ == "__main__":
     print("Задание № 1. Наследование:\n")
-    lecturer = Lecturer('Иван', 'Иванов')
+    lecturer_new = Lecturer('Иван', 'Иванов')
     reviewer = Reviewer('Пётр', 'Петров')
-    print(isinstance(lecturer, Mentor)) # True
+    print(isinstance(lecturer_new, Mentor)) # True
     print(isinstance(reviewer, Mentor)) # True
-    print(lecturer.courses_attached)    # []
+    print(lecturer_new.courses_attached)    # []
     print(reviewer.courses_attached)    # []
 
     print("\n\nЗадание № 2. Атрибуты и взаимодействие классов:\n")
-    lecturer = Lecturer('Иван', 'Иванов')
-    reviewer = Reviewer('Пётр', 'Петров')
-    student = Student('Ольга', 'Алёхина', 'Ж')
+    student_new = Student('Ольга', 'Алёхина', 'Ж')
 
-    student.courses_in_progress += ['Python', 'Java']
-    lecturer.courses_attached += ['Python', 'C++']
+    student_new.courses_in_progress += ['Python', 'Java']
+    lecturer_new.courses_attached += ['Python', 'C++']
     reviewer.courses_attached += ['Python', 'C++']
 
-    print(student.rate_lecture(lecturer, 'Python', 7))   # None
-    print(student.rate_lecture(lecturer, 'Java', 8))     # Ошибка
-    print(student.rate_lecture(lecturer, 'С++', 8))      # Ошибка
-    print(student.rate_lecture(reviewer, 'Python', 6))   # Ошибка
+    print(student_new.rate_lecture(lecturer_new, 'Python', 7))   # None
+    print(student_new.rate_lecture(lecturer_new, 'Java', 8))     # Ошибка
+    print(student_new.rate_lecture(lecturer_new, 'С++', 8))      # Ошибка
+    print(student_new.rate_lecture(reviewer, 'Python', 6))   # Ошибка
 
-    print(lecturer.grades)  # {'Python': [7]}
+    print(lecturer_new.grades)  # {'Python': [7]}
 
     print("\n\nЗадание № 3. Полиморфизм и магические методы и Задание № 4. Полевые испытания:\n")
     reviewer1 = Reviewer('Василий', 'Иванов')
@@ -412,7 +404,7 @@ if __name__ == "__main__":
     print(f"{student2.name} {student2.surname}, средняя оценка: {avg_grade(student2.grades):.2f}")
     print(f"{student1.name} {student1.surname} == {student2.name} {student2.surname}: {student1 == student2}")
     print(f"{student1.name} {student1.surname} != {student2.name} {student2.surname}: {student1 != student2}")
-    print(f"{student2.name} {student2.surname} < {student2.name} {student2.surname}: {student1 < student2}")
+    print(f"{student1.name} {student1.surname} < {student2.name} {student2.surname}: {student1 < student2}")
     print(f"{student1.name} {student1.surname} > {student2.name} {student2.surname}: {student1 > student2}")
     print(f"{student1.name} {student1.surname} <= {student2.name} {student2.surname}: {student1 <= student2}")
     print(f"{student1.name} {student1.surname} >= {student2.name} {student2.surname}: {student1 >= student2}")
@@ -434,10 +426,10 @@ if __name__ == "__main__":
 
     print("\nСортировка студентов по средней оценке:")
     students_sorted = sorted([student1, student2], reverse=True)
-    for i, target_student in enumerate(students_sorted, 1):
-        print(f"{i}. {target_student.name} {target_student.surname}: {avg_grade(target_student.grades):.2f}")
+    for i, x_student in enumerate(students_sorted, 1):
+        print(f"{i}. {x_student.name} {x_student.surname}: {avg_grade(x_student.grades):.2f}")
 
     print("\nСортировка лекторов по средней оценке:")
-    lecturers_sorted = sorted([lecturer1, lecturer2, lecturer], reverse=True)
-    for i, target_lecturer in enumerate(lecturers_sorted, 1):
-        print(f"{i}. {target_lecturer.name} {target_lecturer.surname}: {avg_grade(target_lecturer.grades):.2f}")
+    lecturers_sorted = sorted([lecturer1, lecturer2, lecturer_new], reverse=True)
+    for i, x_lecturer in enumerate(lecturers_sorted, 1):
+        print(f"{i}. {x_lecturer.name} {x_lecturer.surname}: {avg_grade(x_lecturer.grades):.2f}")
